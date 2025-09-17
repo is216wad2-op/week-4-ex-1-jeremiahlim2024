@@ -1,212 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-        
-        form {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        
-        input[type="text"], input[type="number"], input[type="password"] {
-            width: 200px;
-            padding: 5px;
-            margin: 5px 0 10px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        
-        input[type="submit"], input[type="reset"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            margin: 10px 5px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        input[type="reset"] {
-            background-color: #f44336;
-        }
-        
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-        
-        input[type="reset"]:hover {
-            background-color: #da190b;
-        }
-        
-        label {
-            display: inline-block;
-            width: 80px;
-            font-weight: bold;
-        }
-        
-        .form-row {
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
 <body>
     
     <h2>Form Validation</h2>
 
-    <form id="frm" name="frm" action="#" onsubmit="return validateForm()" autocomplete="on">
-        <div class="form-row">
-            <label>ID:</label><input type="text" name="id" id="id">
-        </div>
-        <div class="form-row">
-            <label>Age:</label><input type="number" name="age" id="age">
-        </div>
-        <div class="form-row">
-            <label>Email:</label><input type="text" name="email" id="email">
-        </div>
-        <div class="form-row">
-            <label>Password:</label><input type="password" name="password" id="password">
-        </div>
-        <div class="form-row">
-            <input type="submit" value="Submit">
+    <form name="form" action="#" onsubmit="validateForm('form')" autocomplete="on" >
+            ID: <input type="text" name="id" ><br>
+            Age: <input type="number" name="age" ><br>
+            Email: <input type="text" name="email" ><br>
+            Password: <input type="password" name="password" ><br>
+            <input type="submit" value="Submit"><br>
             <input type="reset" name="reset" value="Reset">
-        </div>
+            <button type="button" onclick="event.preventDefault(); validateForm('form')">Checking button</button>
     </form>
 
+    <!-- validation using HTML5 attributes-->
+    <!--  
+       <form name="form" action="#" onsubmit="return validateForm()" autocomplete="on" >
+            ID: <input type="text" name="id" maxlength="10"><br>
+            Age: <input type="number" name="age" min="10" max="40"><br>
+            Email: <input type="text" name="email" ><br>
+            Password: <input type="password" name="password" required><br>
+            <input type="submit" value="Submit"><br>
+        </form> 
+    -->
+
     <script>
-        function validateForm() {
-            // Method 1: Access form by name
-            var form = document.forms["frm"];
-            
-            // Corrected: Use square brackets or dot notation
+        function validateForm(fname) {
+            var form = document.forms[fname];
+
             var id = form["id"].value;
-            var email = form["email"].value;
             var age = form["age"].value;
-            var password = form["password"].value;
-            
+            var email = form["email"].value;
+            var pwd = form["password"].value;
+           
             var msg = "";
-            
-            // Validation rules
+
             if (id.length > 10) {
-                msg += "ID must not be more than 10 characters\n";
+                msg += "ID must not contain more than 10 characters\n";
             }
-            
+
             if (age < 10 || age > 40) {
                 msg += "Age must be between 10 and 40\n";
             }
-            
-            if (!email.includes('@')) {
-                msg += "Email must contain @\n";
+
+            if (!email.includes("@") ) {
+                msg += "Email must contain '@'\n";
             }
-            
-            // Corrected: Use comparison operator (===) instead of assignment (=)
-            if (password === '' || password.length === 0) {
+
+            if (pwd == "") {
                 msg += "Password must not be empty\n";
             }
-            
-            // Show validation messages and prevent submission if there are errors
-            if (msg !== '') {
+
+            if (msg != "") {
                 alert(msg);
-                return false; // Prevent form submission
+                return false;
             } else {
-                alert("Form submitted successfully!");
-                return true; // Allow form submission
+                return true;
             }
-        }
-        
-        // Alternative validation function using different DOM access methods
-        function validateFormAlternative() {
-            // Method 2: Access elements by ID
-            var id = document.getElementById("id").value;
-            var age = document.getElementById("age").value;
-            var email = document.getElementById("email").value;
-            var password = document.getElementById("password").value;
+
             
-            var errors = [];
-            
-            // More comprehensive validation
-            if (id.trim().length === 0) {
-                errors.push("ID is required");
-            } else if (id.length > 10) {
-                errors.push("ID must not be more than 10 characters");
-            }
-            
-            if (age === '' || isNaN(age)) {
-                errors.push("Age is required and must be a number");
-            } else if (age < 10 || age > 40) {
-                errors.push("Age must be between 10 and 40");
-            }
-            
-            if (email.trim().length === 0) {
-                errors.push("Email is required");
-            } else if (!email.includes('@') || !email.includes('.')) {
-                errors.push("Email must contain @ and .");
-            }
-            
-            if (password.length === 0) {
-                errors.push("Password is required");
-            } else if (password.length < 6) {
-                errors.push("Password must be at least 6 characters long");
-            }
-            
-            if (errors.length > 0) {
-                alert("Validation Errors:\n" + errors.join("\n"));
-                return false;
-            }
-            
-            return true;
-        }
-        
-        // Method 3: Using modern event listeners (recommended approach)
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('frm');
-            
-            form.addEventListener('submit', function(event) {
-                if (!validateFormModern()) {
-                    event.preventDefault(); // Prevent form submission
-                }
-            });
-        });
-        
-        function validateFormModern() {
-            const formData = new FormData(document.getElementById('frm'));
-            
-            const id = formData.get('id');
-            const age = parseInt(formData.get('age'));
-            const email = formData.get('email');
-            const password = formData.get('password');
-            
-            const errors = [];
-            
-            if (!id || id.length > 10) {
-                errors.push("ID is required and must not exceed 10 characters");
-            }
-            
-            if (!age || age < 10 || age > 40) {
-                errors.push("Age must be between 10 and 40");
-            }
-            
-            if (!email || !email.includes('@')) {
-                errors.push("Valid email is required");
-            }
-            
-            if (!password) {
-                errors.push("Password is required");
-            }
-            
-            if (errors.length > 0) {
-                alert("Please fix the following errors:\n" + errors.join("\n"));
-                return false;
-            }
-            
-            return true;
         }
     </script>
 </body>
